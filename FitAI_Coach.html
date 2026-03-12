@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="FitAI Coach"/>
+<meta name="theme-color" content="#0A0A0F"/>
+<title>FitAI Coach</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:#0A0A0F;font-family:-apple-system,'Helvetica Neue',sans-serif;color:#F1F5F9;min-height:100vh;overscroll-behavior:none}
+::-webkit-scrollbar{display:none}
+input,button,textarea,select{font-family:inherit;outline:none}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=range]{accent-color:#A78BFA;width:100%}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.fade{animation:fadeIn 0.25s ease}
+.page{display:flex;flex-direction:column;gap:14px;padding:14px;padding-bottom:100px;max-width:480px;margin:0 auto}
+.card{background:#16161F;border:1px solid #1E1E2E;border-radius:20px;padding:18px}
+.card-accent{background:linear-gradient(135deg,rgba(110,231,183,0.08),rgba(96,165,250,0.08));border:1px solid rgba(110,231,183,0.2);border-radius:20px;padding:18px}
+.btn{width:100%;padding:14px;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;border:none;display:block;text-align:center;transition:opacity 0.15s}
+.btn:active{opacity:0.8}
+.btn-primary{background:linear-gradient(135deg,#6EE7B7,#60A5FA);color:#0A0A0F}
+.btn-ghost{background:rgba(110,231,183,0.1);border:1px solid rgba(110,231,183,0.3);color:#6EE7B7;border-radius:12px;padding:12px;font-weight:700;font-size:13px;cursor:pointer;width:100%;text-align:center}
+.btn-danger{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);color:#F87171;border-radius:12px;padding:13px;font-weight:700;font-size:14px;cursor:pointer;width:100%}
+.inp{width:100%;background:#111118;border:1px solid #1E1E2E;border-radius:12px;padding:12px 14px;color:#F1F5F9;font-size:15px;display:block}
+.inp:focus{border-color:rgba(110,231,183,0.4)}
+.inp::placeholder{color:#334155}
+.sinp{background:#111118;border:1px solid #1E1E2E;border-radius:8px;padding:8px;color:#F1F5F9;font-size:14px;text-align:center;width:100%}
+.chip{padding:9px 14px;border-radius:10px;font-weight:600;cursor:pointer;font-size:13px;border:1px solid #1E1E2E;background:#111118;color:#64748B;transition:all 0.15s}
+.chip.on{background:rgba(110,231,183,0.12);border-color:rgba(110,231,183,0.4);color:#6EE7B7}
+.lbl{color:#64748B;font-size:11px;font-weight:600;margin-bottom:5px;display:block;letter-spacing:0.5px}
+.badge{display:inline-block;border-radius:99px;padding:2px 10px;font-size:11px;font-weight:700}
+.mg4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mbox{text-align:center;background:#111118;border-radius:12px;padding:8px 4px}
+.bt{height:4px;background:#1E1E2E;border-radius:99px;overflow:hidden;margin-top:4px}
+.bf{height:100%;border-radius:99px;transition:width 0.5s ease}
+.week7{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wbox{text-align:center;cursor:pointer}
+.wday{height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin-bottom:3px;border:1px solid #1E1E2E;background:#1E1E2E;color:#64748B;transition:all 0.2s}
+.wlbl{font-size:9px;color:#64748B}
+.food-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #1E1E2E}
+.food-row:last-child{border-bottom:none}
+.sg{display:grid;grid-template-columns:22px 1fr 1fr 28px;gap:6px;align-items:center;margin-bottom:6px}
+.chat-box{display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1;padding-bottom:8px}
+.c-ai{align-self:flex-start;background:#111118;border:1px solid #1E1E2E;border-radius:18px 18px 18px 4px;padding:10px 14px;max-width:86%;font-size:14px;line-height:1.6}
+.c-user{align-self:flex-end;background:rgba(110,231,183,0.12);border:1px solid rgba(110,231,183,0.25);border-radius:18px 18px 4px 18px;padding:10px 14px;max-width:86%;font-size:14px;line-height:1.6}
+.nav-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(17,17,24,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #1E1E2E;display:flex;padding:7px 0 20px;z-index:100}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;padding:5px 2px}
+.nav-btn:active{transform:scale(0.88)}
+.hdr{position:sticky;top:0;z-index:99;background:rgba(10,10,15,0.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid #1E1E2E;padding:14px 18px 11px}
+.ob{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px 100px;max-width:480px;margin:0 auto}
+.sdot{width:10px;height:10px;border-radius:99px;background:#1E1E2E;transition:background 0.3s}
+.sdot.on{background:#6EE7B7}
+.kw{position:relative}
+.kw input{padding-right:54px}
+.ktog{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#64748B;font-size:12px;cursor:pointer;padding:4px}
+.al{border-radius:10px;padding:10px 13px;font-size:13px;margin-top:8px}
+.al-ok{background:rgba(110,231,183,0.1);border:1px solid rgba(110,231,183,0.3);color:#6EE7B7}
+.al-fail{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);color:#F87171}
+.wd{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;border:2px solid #1E1E2E;background:#1E1E2E;transition:all 0.15s}
+.wd.on{background:rgba(96,165,250,0.2);border-color:#60A5FA}
+.hi{width:58px;height:58px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 6px;border:2px solid #1E1E2E;background:#111118;cursor:pointer;transition:all 0.2s}
+.hi.on{background:rgba(110,231,183,0.12);border-color:#6EE7B7}
+.pz{border:2px dashed #1E1E2E;border-radius:16px;text-align:center;cursor:pointer;overflow:hidden}
+.pz img{width:100%;max-height:180px;object-fit:cover;display:block}
+.pph{padding:28px 20px}
+.sw{position:relative;width:120px;height:120px;flex-shrink:0}
+.st{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ld{display:flex;gap:4px;align-items:center;justify-content:center}
+.ld span{width:6px;height:6px;border-radius:99px;background:#6EE7B7;animation:bounce 0.8s infinite}
+.ld span:nth-child(2){animation-delay:0.15s}
+.ld span:nth-child(3){animation-delay:0.3s}
+.r2{display:flex;gap:10px}
+.r2>*{flex:1}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+const SK="fitai_v3";
+const EMPTY={setup:false,apiKey:"",user:{name:"",goal:"muscle_gain",weight:"",targetWeight:"",height:"",age:"",gender:"male"},targets:{calories:2000,protein:150,carbs:200,fats:60},foodLog:[],workoutLogs:[],bodyMetrics:[],weekPlan:[{day:"Mon",type:"Push",done:false},{day:"Tue",type:"Pull",done:false},{day:"Wed",type:"Legs",done:false},{day:"Thu",type:"Push",done:false},{day:"Fri",type:"Pull",done:false},{day:"Sat",type:"Rest",done:false},{day:"Sun",type:"Rest",done:false}],habits:{water:0,sleep:7,steps:0,stretching:false,supplements:false}};
+let D=loadData(),tab="home",aiIdx=0,aiTmr=null;
+let wActive=false,wType="Push",wTimer=0,wRunning=false,wTmr=null,exList=[];
+let chatLog=[],chatInp="",chatBusy=false;
+let obStep=0,obForm={name:"",age:"",height:"",weight:"",targetWeight:"",gender:"male",goal:"muscle_gain"},obTgt={calories:"2000",protein:"150",carbs:"200",fats:"60"},obKey="",obKeyShow=false,obKeyStatus="",obTesting=false;
+let bodyForm={weight:"",bodyfat:"",waist:"",chest:"",arms:""},bodySaved=false;
+let habitInsight="",habitBusy=false;
+let foodMode="manual",manForm={name:"",cals:"",protein:"",carbs:"",fats:""},photoPreview=null,photoFile=null,photoResult=null,photoBusy=false;
+let profForm=null,profKey="",profKeyShow=false,profKeyStatus="",profTesting=false,profSaved=false;
+
+function loadData(){try{const s=localStorage.getItem(SK);return s?Object.assign({},EMPTY,JSON.parse(s)):Object.assign({},EMPTY);}catch{return Object.assign({},EMPTY);}}
+function save(){try{localStorage.setItem(SK,JSON.stringify(D));}catch{}}
+function upd(p){Object.assign(D,p);save();}
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+const pct=(v,m)=>Math.min(100,Math.round((v/Math.max(+m||1,1))*100));
+const fmtT=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
+const todayStr=()=>new Date().toDateString();
+const shortDt=()=>new Date().toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+const $=id=>document.getElementById(id);
+function mk(tag,cls,html,sty){const e=document.createElement(tag);if(cls)e.className=cls;if(html!==undefined)e.innerHTML=html;if(sty)e.style.cssText=sty;return e;}
+const todayFood=()=>D.foodLog.filter(f=>new Date(f.date).toDateString()===todayStr());
+const totals=()=>todayFood().reduce((a,f)=>({cal:a.cal+f.cals,p:a.p+(+f.protein||0),c:a.c+(+f.carbs||0),fat:a.fat+(+f.fats||0)}),{cal:0,p:0,c:0,fat:0});
+const colFor=t=>t==="Push"?"#FB923C":t==="Pull"?"#60A5FA":t==="Legs"?"#A78BFA":"#6EE7B7";
+
+async function callAI(sys,msg,imgB64,imgType){
+  if(!D.apiKey)throw new Error("No key");
+  const content=[];
+  if(imgB64)content.push({type:"image",source:{type:"base64",media_type:imgType,data:imgB64}});
+  content.push({type:"text",text:msg});
+  const body={model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content}]};
+  if(sys)body.system=sys;
+  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":D.apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify(body)});
+  const d=await r.json();
+  if(d.error)throw new Error(d.error.message);
+  return d.content?.[0]?.text||"";
+}
+async function testKey(k){
+  const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":k,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:10,messages:[{role:"user",content:"Reply: OK"}]})});
+  const d=await r.json();
+  if(d.error)throw new Error(d.error.message);
+}
+
+// ─── RENDER ROOT ──────────────────────────────────────────────────────────────
+function draw(){
+  const root=$("root");root.innerHTML="";
+  if(!D.setup){drawOb(root);return;}
+  drawHdr(root);
+  const page=mk("div","page fade");root.appendChild(page);
+  drawNav(root);
+  if(tab==="home")drawHome(page);
+  else if(tab==="food")drawFood(page);
+  else if(tab==="workout")drawWorkout(page);
+  else if(tab==="body")drawBody(page);
+  else if(tab==="habits")drawHabits(page);
+  else if(tab==="coach")drawCoach(page);
+  else if(tab==="profile")drawProfile(page);
+}
+
+// ─── ONBOARDING ───────────────────────────────────────────────────────────────
+function drawOb(root){
+  const w=mk("div","ob");
+  const dots=mk("div","","","display:flex;gap:6px;margin-bottom:32px");
+  for(let i=0;i<4;i++){dots.appendChild(mk("div","sdot"+(i<=obStep?" on":"")));}
+  w.appendChild(dots);
+  if(obStep===0)ob0(w);
+  else if(obStep===1)ob1(w);
+  else if(obStep===2)ob2(w);
+  else ob3(w);
+  root.appendChild(w);
+}
+
+function ob0(w){
+  const c=mk("div","fade","","width:100%;text-align:center");
+  c.innerHTML=`<div style="font-size:64px;margin-bottom:24px">🏋️</div><div style="font-size:28px;font-weight:900;margin-bottom:10px;line-height:1.2">Welcome to<br><span style="background:linear-gradient(135deg,#6EE7B7,#60A5FA);-webkit-background-clip:text;-webkit-text-fill-color:transparent">FitAI Coach</span></div><div style="color:#64748B;font-size:15px;line-height:1.7;margin-bottom:40px">Your personal AI fitness coach.<br>Track workouts, nutrition & body metrics.<br>Set up in 2 minutes.</div>`;
+  const b=mk("button","btn btn-primary","Get Started →");b.onclick=()=>{obStep=1;draw();};c.appendChild(b);w.appendChild(c);
+}
+
+function ob1(w){
+  const c=mk("div","fade","","width:100%");
+  c.innerHTML=`<div style="font-size:13px;color:#6EE7B7;font-weight:700;letter-spacing:1px;margin-bottom:6px">STEP 1 OF 3</div><div style="font-size:22px;font-weight:800;margin-bottom:4px">Your Profile</div><div style="color:#64748B;font-size:13px;margin-bottom:20px">Tell us about yourself to personalise your plan.</div>`;
+  [{k:"name",l:"YOUR NAME",t:"text",ph:"e.g. Akhil"},{k:"age",l:"AGE",t:"number",ph:"28"},{k:"height",l:"HEIGHT (cm)",t:"number",ph:"178"},{k:"weight",l:"CURRENT WEIGHT (kg)",t:"number",ph:"80"},{k:"targetWeight",l:"TARGET WEIGHT (kg)",t:"number",ph:"75"}].forEach(f=>{
+    const d=mk("div","","","margin-bottom:12px");d.appendChild(mk("label","lbl",f.l));
+    const i=mk("input","inp");i.type=f.t;i.placeholder=f.ph;i.value=obForm[f.k]||"";i.oninput=e=>obForm[f.k]=e.target.value;
+    d.appendChild(i);c.appendChild(d);
+  });
+  const gd=mk("div","","","margin-bottom:12px");gd.appendChild(mk("label","lbl","GENDER"));
+  const gr=mk("div","r2");["male","female","other"].forEach(g=>{
+    const b=mk("button","chip"+(obForm.gender===g?" on":""),g[0].toUpperCase()+g.slice(1));b.onclick=()=>{obForm.gender=g;draw();};gr.appendChild(b);
+  });gd.appendChild(gr);c.appendChild(gd);
+  const god=mk("div","","","margin-bottom:20px");god.appendChild(mk("label","lbl","YOUR GOAL"));
+  [["muscle_gain","💪 Muscle Gain"],["fat_loss","🔥 Fat Loss"],["maintenance","⚖️ Maintenance"]].forEach(([v,l])=>{
+    const b=mk("button","chip"+(obForm.goal===v?" on":""),l,"display:block;width:100%;text-align:left;padding:12px 14px;margin-bottom:6px");b.onclick=()=>{obForm.goal=v;draw();};god.appendChild(b);
+  });c.appendChild(god);
+  const btn=mk("button","btn btn-primary","Continue →");btn.onclick=()=>{if(!obForm.name||!obForm.weight){alert("Please enter your name and weight.");return;}obStep=2;draw();};c.appendChild(btn);w.appendChild(c);
+}
+
+function ob2(w){
+  const c=mk("div","fade","","width:100%");
+  c.innerHTML=`<div style="font-size:13px;color:#6EE7B7;font-weight:700;letter-spacing:1px;margin-bottom:6px">STEP 2 OF 3</div><div style="font-size:22px;font-weight:800;margin-bottom:4px">Daily Targets</div><div style="color:#64748B;font-size:13px;margin-bottom:16px">Set your nutrition goals. You can edit these anytime.</div>`;
+  const hint=mk("div","","","background:#111118;border:1px solid #1E1E2E;border-radius:12px;padding:13px;margin-bottom:18px");
+  hint.innerHTML=`<div style="color:#FB923C;font-size:12px;font-weight:700;margin-bottom:4px">💡 Estimate</div><div style="color:#64748B;font-size:12px;line-height:1.6">${obForm.goal==="muscle_gain"?"Muscle gain: ~2200–2800 kcal, protein ~1.8–2.2g per kg.":obForm.goal==="fat_loss"?"Fat loss: 300–500 kcal deficit, protein ~2g per kg.":"Maintenance: match TDEE, protein ~1.6g per kg."}</div>`;
+  c.appendChild(hint);
+  [["calories","🔥 CALORIES (kcal)","2000"],["protein","🥩 PROTEIN (g)","150"],["carbs","🍚 CARBS (g)","200"],["fats","🥑 FATS (g)","60"]].forEach(([k,l,ph])=>{
+    const d=mk("div","","","margin-bottom:12px");d.appendChild(mk("label","lbl",l));
+    const i=mk("input","inp");i.type="number";i.placeholder=ph;i.value=obTgt[k]||"";i.oninput=e=>obTgt[k]=e.target.value;d.appendChild(i);c.appendChild(d);
+  });
+  const r=mk("div","r2","","margin-top:20px");
+  const bk=mk("button","btn","← Back","background:#111118;border:1px solid #1E1E2E;color:#64748B");bk.onclick=()=>{obStep=1;draw();};
+  const nx=mk("button","btn btn-primary","Continue →");nx.onclick=()=>{obStep=3;draw();};
+  r.appendChild(bk);r.appendChild(nx);c.appendChild(r);w.appendChild(c);
+}
+
+function ob3(w){
+  const c=mk("div","fade","","width:100%");
+  c.innerHTML=`<div style="font-size:13px;color:#6EE7B7;font-weight:700;letter-spacing:1px;margin-bottom:6px">STEP 3 OF 3</div><div style="font-size:22px;font-weight:800;margin-bottom:4px">AI Features</div><div style="color:#64748B;font-size:13px;line-height:1.7;margin-bottom:16px">Add your Anthropic API key to unlock AI food recognition, coaching chat and smart insights.<br><br>Your key is saved <strong style="color:#F1F5F9">only on this device</strong>.</div>`;
+  const info=mk("div","","","background:#111118;border:1px solid #1E1E2E;border-radius:12px;padding:13px;margin-bottom:16px");
+  info.innerHTML=`<div style="color:#FB923C;font-size:12px;font-weight:700;margin-bottom:6px">How to get your free API key:</div><div style="color:#64748B;font-size:12px;line-height:1.9">1. Go to <span style="color:#60A5FA">console.anthropic.com</span><br>2. Sign up / Sign in<br>3. Click <strong style="color:#F1F5F9">API Keys</strong> → Create new key<br>4. Copy and paste it below</div>`;
+  c.appendChild(info);
+  const kd=mk("div","","","margin-bottom:10px");kd.appendChild(mk("label","lbl","API KEY"));
+  const kw=mk("div","kw");
+  const ki=mk("input","inp");ki.type=obKeyShow?"text":"password";ki.placeholder="sk-ant-api03-...";ki.value=obKey;ki.oninput=e=>{obKey=e.target.value;obKeyStatus="";};
+  const kt=mk("button","ktog",obKeyShow?"Hide":"Show");kt.onclick=()=>{obKeyShow=!obKeyShow;draw();};
+  kw.appendChild(ki);kw.appendChild(kt);kd.appendChild(kw);c.appendChild(kd);
+  if(obKey.trim()){
+    const tb=mk("button","btn-ghost","","margin-bottom:10px");
+    tb.innerHTML=obTesting?`<div class="ld"><span></span><span></span><span></span></div>`:"Test API Key";
+    tb.disabled=obTesting;
+    tb.onclick=async()=>{obTesting=true;obKeyStatus="";draw();try{await testKey(obKey.trim());obKeyStatus="ok";}catch{obKeyStatus="fail";}obTesting=false;draw();};
+    c.appendChild(tb);
+  }
+  if(obKeyStatus==="ok")c.appendChild(mk("div","al al-ok","✓ API key works! AI features ready."));
+  if(obKeyStatus==="fail")c.appendChild(mk("div","al al-fail","✗ Key didn't work. Check and try again."));
+  const r=mk("div","r2","","margin-top:20px");
+  const bk=mk("button","btn","← Back","background:#111118;border:1px solid #1E1E2E;color:#64748B");bk.onclick=()=>{obStep=2;draw();};
+  const st=mk("button","btn btn-primary","Start FitAI →");
+  st.onclick=()=>{upd({setup:true,apiKey:obKey.trim(),user:{name:obForm.name,age:+obForm.age,height:+obForm.height,weight:+obForm.weight,targetWeight:+obForm.targetWeight,gender:obForm.gender,goal:obForm.goal},targets:{calories:+obTgt.calories||2000,protein:+obTgt.protein||150,carbs:+obTgt.carbs||200,fats:+obTgt.fats||60}});draw();};
+  r.appendChild(bk);r.appendChild(st);c.appendChild(r);
+  const sk=mk("button","","Skip for now (AI features disabled)","display:block;width:100%;background:none;border:none;color:#64748B;font-size:13px;cursor:pointer;padding:14px 8px;margin-top:4px");
+  sk.onclick=()=>{upd({setup:true,apiKey:"",user:{name:obForm.name,age:+obForm.age,height:+obForm.height,weight:+obForm.weight,targetWeight:+obForm.targetWeight,gender:obForm.gender,goal:obForm.goal},targets:{calories:+obTgt.calories||2000,protein:+obTgt.protein||150,carbs:+obTgt.carbs||200,fats:+obTgt.fats||60}});draw();};
+  c.appendChild(sk);w.appendChild(c);
+}
+
+// ─── HEADER ───────────────────────────────────────────────────────────────────
+function drawHdr(root){
+  const titles={home:`Hey, ${D.user.name} 👋`,food:"Nutrition",workout:"Workout",body:"Body Metrics",habits:"Habits",coach:"AI Coach",profile:"Profile"};
+  const h=mk("div","hdr");
+  h.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;max-width:480px;margin:0 auto"><div><div style="font-size:10px;color:#64748B;font-weight:700;letter-spacing:1.5px">FITAI COACH</div><div style="font-size:20px;font-weight:800;margin-top:2px">${titles[tab]||""}</div></div><div style="width:38px;height:38px;border-radius:99px;background:linear-gradient(135deg,#6EE7B7,#60A5FA);display:flex;align-items:center;justify-content:center;font-weight:900;color:#0A0A0F;font-size:16px">${(D.user.name||"?")[0].toUpperCase()}</div></div>`;
+  root.appendChild(h);
+}
+
+// ─── NAV ──────────────────────────────────────────────────────────────────────
+function drawNav(root){
+  const tabs=[{id:"home",ic:"⬡",lb:"Home"},{id:"food",ic:"🥗",lb:"Food"},{id:"workout",ic:"💪",lb:"Train"},{id:"body",ic:"📊",lb:"Body"},{id:"habits",ic:"🌟",lb:"Habits"},{id:"coach",ic:"🤖",lb:"Coach"},{id:"profile",ic:"⚙️",lb:"Profile"}];
+  const nav=mk("div","nav-bar");
+  tabs.forEach(t=>{
+    const a=tab===t.id,b=mk("button","nav-btn");
+    b.innerHTML=`<div style="font-size:21px;opacity:${a?1:0.38};transform:scale(${a?1.15:1});transition:all 0.2s">${t.ic}</div><div style="font-size:9px;font-weight:700;color:${a?"#6EE7B7":"#64748B"}">${t.lb}</div>${a?`<div style="width:4px;height:4px;border-radius:99px;background:#6EE7B7"></div>`:""}`;
+    b.onclick=()=>{tab=t.id;draw();};nav.appendChild(b);
+  });root.appendChild(nav);
+}
+
+// ─── HOME ─────────────────────────────────────────────────────────────────────
+function drawHome(pg){
+  const tot=totals(),cLeft=D.targets.calories-tot.cal,done=D.weekPlan.filter(w=>w.done).length;
+  const score=Math.min(100,Math.round(((done/5)*40)+((pct(tot.p,D.targets.protein)/100)*35)+((Math.min(D.habits.sleep,8)/8)*25)));
+  const msgs=[cLeft>0?`You have ${cLeft} calories remaining today.`:`You are ${Math.abs(cLeft)} calories over target.`,`Protein: ${tot.p}g of ${D.targets.protein}g target. ${tot.p<D.targets.protein?`Need ${D.targets.protein-tot.p}g more.`:"Target hit! 🎯"}`,`${done}/5 workouts this week. ${done>=4?"Great consistency! 🔥":done>=2?"Keep pushing!":"Let's get moving 💪"}`,`Sleep: ${D.habits.sleep}h. ${D.habits.sleep>=7?"Good recovery!":"Aim for 7–8h tonight."}`,`Steps: ${D.habits.steps.toLocaleString()}. ${D.habits.steps>=10000?"Daily goal done! 🎉":`${(10000-D.habits.steps).toLocaleString()} more to reach 10k.`}`];
+  const msg=msgs[aiIdx%msgs.length];
+  // AI bubble
+  const ai=mk("div","card-accent");ai.innerHTML=`<div style="display:flex;gap:12px;align-items:flex-start"><div style="width:40px;height:40px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,#6EE7B7,#60A5FA);display:flex;align-items:center;justify-content:center;font-size:20px">🤖</div><div><div style="color:#6EE7B7;font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:4px">AI COACH · TODAY</div><div style="color:#F1F5F9;font-size:14px;line-height:1.6">${msg}</div></div></div>`;pg.appendChild(ai);
+  // Calories
+  const cal=mk("div","card");cal.innerHTML=`<div style="font-weight:700;margin-bottom:12px">🔥 Today's Calories</div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="text-align:center"><div style="font-weight:900;font-size:28px">${tot.cal}</div><div style="color:#64748B;font-size:11px">consumed</div></div><div style="flex:1;height:8px;background:#1E1E2E;border-radius:99px;margin:0 14px"><div style="height:100%;width:${pct(tot.cal,D.targets.calories)}%;background:linear-gradient(90deg,#6EE7B7,#60A5FA);border-radius:99px"></div></div><div style="text-align:center"><div style="font-weight:900;font-size:28px;color:${cLeft>0?"#6EE7B7":"#F87171"}">${Math.abs(cLeft)}</div><div style="color:#64748B;font-size:11px">${cLeft>0?"remaining":"over"}</div></div></div><div class="mg4">${[{l:"Protein",v:tot.p,max:D.targets.protein,c:"#60A5FA"},{l:"Carbs",v:tot.c,max:D.targets.carbs,c:"#A78BFA"},{l:"Fats",v:tot.fat,max:D.targets.fats,c:"#FB923C"},{l:"Target",v:D.targets.calories,max:D.targets.calories,c:"#6EE7B7"}].map(({l,v,max,c})=>`<div class="mbox"><div style="font-weight:800;font-size:15px;color:${c}">${l==="Target"?D.targets.calories:v}${l==="Target"?"":l!=="Target"?"g":""}</div><div style="font-size:9px;color:#64748B;margin:2px 0 4px">${l}</div><div class="bt"><div class="bf" style="width:${l==="Target"?100:pct(v,max)}%;background:${c}"></div></div></div>`).join("")}</div>`;pg.appendChild(cal);
+  // Score
+  const sc=mk("div","card","","display:flex;align-items:center;gap:18px");
+  const sColor=score>=80?"#6EE7B7":score>=60?"#FB923C":"#F87171";
+  const r=52,ci=2*Math.PI*r,off=ci-(score/100)*ci;
+  sc.innerHTML=`<div class="sw"><svg width="120" height="120" style="transform:rotate(-90deg)"><circle cx="60" cy="60" r="${r}" fill="none" stroke="#1E1E2E" stroke-width="8"/><circle cx="60" cy="60" r="${r}" fill="none" stroke="${sColor}" stroke-width="8" stroke-dasharray="${ci}" stroke-dashoffset="${off}" stroke-linecap="round" style="filter:drop-shadow(0 0 6px ${sColor})"/></svg><div class="st"><div style="font-size:28px;font-weight:900;color:${sColor}">${score}</div><div style="font-size:10px;color:#64748B;font-weight:600">SCORE</div></div></div><div><div style="color:#64748B;font-size:11px;font-weight:600;margin-bottom:8px">WEEKLY SCORE</div><div style="line-height:1.9;font-size:13px"><div style="color:${done>=4?"#6EE7B7":"#F1F5F9"}">🏋️ ${done}/5 workouts</div><div style="color:${tot.p>=D.targets.protein?"#6EE7B7":"#FB923C"}">🥩 ${tot.p}g/${D.targets.protein}g protein</div><div style="color:${D.habits.sleep>=7?"#6EE7B7":"#FB923C"}">😴 ${D.habits.sleep}h sleep</div><div style="color:${D.habits.steps>=10000?"#6EE7B7":"#64748B"}">🚶 ${D.habits.steps.toLocaleString()} steps</div></div></div>`;pg.appendChild(sc);
+  // Week
+  const wk=mk("div","card");wk.innerHTML=`<div style="font-weight:700;margin-bottom:12px">📅 This Week</div><div class="week7">${D.weekPlan.map((w,i)=>{const col=colFor(w.type);return`<div class="wbox" onclick="togDay(${i})"><div class="wday" style="${w.done?`background:${col}20;border-color:${col}60;color:${col}`:""}">${w.type==="Rest"?"💤":w.done?"✓":w.type.slice(0,3)}</div><div class="wlbl">${w.day}</div></div>`;}).join("")}</div>`;pg.appendChild(wk);
+}
+window.togDay=i=>{const p=D.weekPlan.map((w,j)=>j===i?Object.assign({},w,{done:!w.done}):w);upd({weekPlan:p});draw();};
+
+// ─── FOOD ─────────────────────────────────────────────────────────────────────
+function drawFood(pg){
+  const tot=totals();
+  const sum=mk("div","card");sum.innerHTML=`<div style="font-weight:700;margin-bottom:12px">Today's Nutrition</div><div class="mg4">${[{l:"kcal",v:tot.cal,max:D.targets.calories,c:"#FB923C"},{l:"Protein",v:tot.p,max:D.targets.protein,c:"#60A5FA"},{l:"Carbs",v:tot.c,max:D.targets.carbs,c:"#A78BFA"},{l:"Fats",v:tot.fat,max:D.targets.fats,c:"#6EE7B7"}].map(({l,v,max,c})=>`<div class="mbox"><div style="font-weight:800;font-size:15px;color:${c}">${v}</div><div style="font-size:9px;color:#64748B;margin:2px 0 4px">${l}</div><div class="bt"><div class="bf" style="width:${pct(v,max)}%;background:${c}"></div></div></div>`).join("")}</div>`;pg.appendChild(sum);
+  const mr=mk("div","","","display:flex;gap:8px;margin-bottom:4px");
+  [["manual","✏️ Manual"],["photo","📷 AI Photo"]].forEach(([m,l])=>{const b=mk("button","chip"+(foodMode===m?" on":""),l);b.onclick=()=>{foodMode=m;draw();};mr.appendChild(b);});pg.appendChild(mr);
+  if(foodMode==="manual"){
+    const card=mk("div","card");card.innerHTML=`<div style="font-weight:700;margin-bottom:12px">Log Food</div>`;
+    const ni=mk("input","inp");ni.placeholder="Food name e.g. Grilled chicken";ni.value=manForm.name;ni.style.marginBottom="8px";ni.oninput=e=>manForm.name=e.target.value;card.appendChild(ni);
+    const g=mk("div","","","display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px");
+    [{k:"cals",ph:"kcal"},{k:"protein",ph:"protein"},{k:"carbs",ph:"carbs"},{k:"fats",ph:"fats"}].forEach(({k,ph})=>{const i=mk("input","sinp");i.type="number";i.placeholder=ph;i.value=manForm[k];i.oninput=e=>manForm[k]=e.target.value;g.appendChild(i);});card.appendChild(g);
+    const btn=mk("button","btn btn-primary","+ Log Food");btn.onclick=()=>{if(!manForm.name)return;D.foodLog.unshift({id:Date.now(),date:new Date().toISOString(),time:new Date().toTimeString().slice(0,5),name:manForm.name,cals:+manForm.cals||0,protein:+manForm.protein||0,carbs:+manForm.carbs||0,fats:+manForm.fats||0,emoji:"🍽️"});save();manForm={name:"",cals:"",protein:"",carbs:"",fats:""};draw();};card.appendChild(btn);pg.appendChild(card);
+  }
+  if(foodMode==="photo"){
+    const card=mk("div","card");card.innerHTML=`<div style="font-weight:700;margin-bottom:12px">📷 AI Food Recognition</div>`;
+    const lbl=mk("label","pz");
+    if(photoPreview){const img=mk("img");img.src=photoPreview;lbl.appendChild(img);}else{lbl.appendChild(mk("div","pph","<div style='font-size:36px;margin-bottom:6px'>📸</div><div style='color:#64748B;font-size:13px'>Tap to take photo or upload</div>"));}
+    const fi=mk("input");fi.type="file";fi.accept="image/*";fi.setAttribute("capture","environment");fi.style.display="none";
+    fi.onchange=e=>{const f=e.target.files[0];if(!f)return;photoFile=f;photoResult=null;const r=new FileReader();r.onload=ev=>{photoPreview=ev.target.result;draw();};r.readAsDataURL(f);};
+    lbl.appendChild(fi);card.appendChild(lbl);
+    if(photoFile&&!photoResult){
+      const btn=mk("button","btn btn-primary","","margin-top:10px");btn.innerHTML=photoBusy?`<div class="ld"><span></span><span></span><span></span></div>`:"Analyse Food";btn.disabled=photoBusy;
+      if(photoBusy)btn.style.background="#1E1E2E";
+      btn.onclick=async()=>{if(!D.apiKey){alert("Add your API key in Profile.");return;}photoBusy=true;draw();try{const b64=photoPreview.split(",")[1];const txt=await callAI(null,'Analyze this food. JSON only, no markdown: {"name":"food","calories":number,"protein":number,"carbs":number,"fats":number,"emoji":"emoji"}',b64,photoFile.type);photoResult=JSON.parse(txt.replace(/```json|```/g,"").trim());}catch{photoResult={name:"Food item",calories:300,protein:15,carbs:30,fats:10,emoji:"🍽️"};}photoBusy=false;draw();};card.appendChild(btn);
+    }
+    if(photoResult){
+      const res=mk("div","","","background:#111118;border-radius:14px;padding:14px;margin-top:10px");
+      res.innerHTML=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px"><span style="font-size:28px">${photoResult.emoji}</span><div style="font-weight:700">${photoResult.name}</div></div><div class="mg4" style="margin-bottom:10px">${[{l:"kcal",v:photoResult.calories,c:"#FB923C"},{l:"Protein",v:photoResult.protein,c:"#60A5FA"},{l:"Carbs",v:photoResult.carbs,c:"#A78BFA"},{l:"Fats",v:photoResult.fats,c:"#6EE7B7"}].map(({l,v,c})=>`<div class="mbox"><div style="font-weight:800;font-size:14px;color:${c}">${v}</div><div style="font-size:9px;color:#64748B">${l}</div></div>`).join("")}</div>`;
+      const lb=mk("button","btn btn-primary","+ Log This Food");lb.onclick=()=>{D.foodLog.unshift({id:Date.now(),date:new Date().toISOString(),time:new Date().toTimeString().slice(0,5),name:photoResult.name,cals:photoResult.calories,protein:photoResult.protein,carbs:photoResult.carbs,fats:photoResult.fats,emoji:photoResult.emoji});save();photoFile=null;photoPreview=null;photoResult=null;draw();};res.appendChild(lb);card.appendChild(res);
+    }
+    pg.appendChild(card);
+  }
+  const tl=todayFood();
+  if(tl.length){const lc=mk("div","card");lc.innerHTML=`<div style="font-weight:700;margin-bottom:10px">Today's Log</div>${tl.map(f=>`<div class="food-row"><span style="font-size:22px">${f.emoji}</span><div style="flex:1"><div style="font-weight:600;font-size:14px">${f.name}</div><div style="color:#64748B;font-size:11px">${f.time}</div></div><div style="text-align:right"><div style="color:#6EE7B7;font-weight:700;font-size:14px">${f.cals} kcal</div><div style="color:#64748B;font-size:11px">${f.protein}p·${f.carbs}c·${f.fats}f</div></div></div>`).join("")}`;pg.appendChild(lc);}
+  else pg.appendChild(mk("div","","No food logged today. Start logging! 🥗","text-align:center;color:#64748B;font-size:14px;padding:16px 0"));
+}
+
+// ─── WORKOUT ──────────────────────────────────────────────────────────────────
+function drawWorkout(pg){
+  if(!wActive){
+    const sc=mk("div","card");sc.innerHTML=`<div style="font-weight:700;margin-bottom:12px">Start Workout</div>`;
+    const tr=mk("div","","","display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px");
+    ["Push","Pull","Legs","Upper","Full Body","Cardio"].forEach(t=>{const b=mk("button","chip"+(wType===t?" on":""),t);b.onclick=()=>{wType=t;draw();};tr.appendChild(b);});sc.appendChild(tr);
+    const sb=mk("button","btn btn-primary",`Start ${wType} Day →`);sb.onclick=()=>{wActive=true;wRunning=true;wTimer=0;exList=[];startWTimer();draw();};sc.appendChild(sb);pg.appendChild(sc);
+    const wk=mk("div","card");wk.innerHTML=`<div style="font-weight:700;margin-bottom:12px">This Week</div><div class="week7">${D.weekPlan.map((w,i)=>{const col=colFor(w.type);return`<div class="wbox" onclick="togDay(${i})"><div class="wday" style="${w.done?`background:${col}20;border-color:${col}60;color:${col}`:""}">${w.type==="Rest"?"💤":w.done?"✓":w.type.slice(0,3)}</div><div class="wlbl">${w.day}</div></div>`;}).join("")}</div>`;pg.appendChild(wk);
+    if(D.workoutLogs.length){D.workoutLogs.slice(0,3).forEach(log=>{const col=colFor(log.type);const c=mk("div","card");c.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div style="font-weight:700">${log.type} Day</div><div style="color:#64748B;font-size:11px">${new Date(log.date).toLocaleDateString()}·${fmtT(log.duration||0)}</div></div><span class="badge" style="background:${col}20;color:${col}">${log.type}</span></div>${log.exercises.map(ex=>`<div style="margin-bottom:8px"><div style="font-size:13px;font-weight:600;margin-bottom:4px">${ex.name}</div><div style="display:flex;gap:5px;flex-wrap:wrap">${ex.sets.map(s=>`<div style="background:#111118;border:1px solid #1E1E2E;border-radius:7px;padding:3px 8px;font-size:11px;color:#64748B"><span style="color:#F1F5F9;font-weight:700">${s.reps}</span>×${s.weight}kg</div>`).join("")}</div></div>`).join("")}`;pg.appendChild(c);});}
+    else pg.appendChild(mk("div","","No workouts yet. Start your first! 💪","text-align:center;color:#64748B;font-size:14px;padding:16px 0"));
+  } else {
+    const tc=mk("div","card-accent","","text-align:center");
+    tc.innerHTML=`<div style="color:#64748B;font-size:11px;font-weight:700;margin-bottom:4px">${wType.toUpperCase()} DAY</div><div id="wtmr" style="color:#6EE7B7;font-weight:900;font-size:46px;font-variant-numeric:tabular-nums;margin-bottom:10px">${fmtT(wTimer)}</div>`;
+    const pb=mk("button","btn-ghost",wRunning?"⏸ Pause":"▶ Resume");pb.onclick=()=>{wRunning=!wRunning;wRunning?startWTimer():stopWTimer();draw();};tc.appendChild(pb);pg.appendChild(tc);
+    exList.forEach((ex,ei)=>{
+      const card=mk("div","card");
+      const ni=mk("input","","","width:100%;background:#111118;border:1px solid #1E1E2E;border-radius:10px;padding:9px 12px;color:#F1F5F9;font-size:15px;font-weight:700;margin-bottom:10px;font-family:inherit");ni.placeholder="Exercise name";ni.value=ex.name;ni.oninput=e=>exList[ei].name=e.target.value;card.appendChild(ni);
+      ex.sets.forEach((s,si)=>{
+        const row=mk("div","sg");
+        const num=mk("span","","#"+(si+1),"color:#64748B;font-size:11px;text-align:center");
+        const ri=mk("input","sinp");ri.type="number";ri.value=s.reps;ri.placeholder="Reps";ri.oninput=e=>exList[ei].sets[si].reps=+e.target.value;
+        const wi=mk("input","sinp");wi.type="number";wi.value=s.weight;wi.placeholder="kg";wi.oninput=e=>exList[ei].sets[si].weight=+e.target.value;
+        const ck=mk("div","","✓","width:28px;height:28px;border-radius:8px;background:rgba(110,231,183,0.12);border:1px solid rgba(110,231,183,0.3);display:flex;align-items:center;justify-content:center;color:#6EE7B7;font-size:14px;cursor:pointer");
+        row.appendChild(num);row.appendChild(ri);row.appendChild(wi);row.appendChild(ck);card.appendChild(row);
+      });
+      const as=mk("button","","+ Add Set","width:100%;padding:7px;background:#111118;border:1px dashed #1E1E2E;border-radius:8px;color:#64748B;cursor:pointer;font-size:12px;font-family:inherit;margin-top:4px");as.onclick=()=>{exList[ei].sets.push({reps:10,weight:0});draw();};card.appendChild(as);pg.appendChild(card);
+    });
+    const ae=mk("button","","+ Add Exercise","width:100%;padding:13px;background:#111118;border:1px dashed #1E1E2E;border-radius:14px;color:#64748B;cursor:pointer;font-size:14px;font-family:inherit");ae.onclick=()=>{exList.push({name:"",sets:[{reps:10,weight:0}]});draw();};pg.appendChild(ae);
+    const fin=mk("button","btn btn-primary","Finish Workout ✓");fin.onclick=()=>{stopWTimer();const v=exList.filter(e=>e.name.trim());if(v.length){D.workoutLogs.unshift({id:Date.now(),date:new Date().toISOString(),type:wType,duration:wTimer,exercises:v});save();}wActive=false;wRunning=false;wTimer=0;exList=[];draw();};pg.appendChild(fin);
+  }
+}
+function startWTimer(){stopWTimer();wTmr=setInterval(()=>{wTimer++;const d=$("wtmr");if(d)d.textContent=fmtT(wTimer);},1000);}
+function stopWTimer(){clearInterval(wTmr);wTmr=null;}
+
+// ─── BODY ─────────────────────────────────────────────────────────────────────
+function drawBody(pg){
+  const card=mk("div","card");card.innerHTML=`<div style="font-weight:700;margin-bottom:14px">📏 Log Today's Metrics</div>`;
+  const g=mk("div","g2","","margin-bottom:14px");
+  [["weight","Weight (kg)","80"],["bodyfat","Body Fat %","15"],["waist","Waist (cm)","80"],["chest","Chest (cm)","100"],["arms","Arms (cm)","35"]].forEach(([k,l,ph])=>{
+    const d=mk("div");d.appendChild(mk("label","lbl",l));const i=mk("input","inp");i.type="number";i.placeholder=ph;i.value=bodyForm[k];i.oninput=e=>bodyForm[k]=e.target.value;d.appendChild(i);g.appendChild(d);
+  });card.appendChild(g);
+  const btn=mk("button","btn btn-primary",bodySaved?"✓ Saved!":"Log Metrics");
+  if(bodySaved)btn.style.cssText="width:100%;padding:14px;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;border:none;background:rgba(110,231,183,0.15);color:#6EE7B7;border:1px solid rgba(110,231,183,0.3)";
+  btn.onclick=()=>{if(!bodyForm.weight)return;D.bodyMetrics.push({date:shortDt(),...Object.fromEntries(Object.entries(bodyForm).map(([k,v])=>[k,parseFloat(v)||0]))});save();bodySaved=true;bodyForm={weight:"",bodyfat:"",waist:"",chest:"",arms:""};draw();setTimeout(()=>{bodySaved=false;},2000);};card.appendChild(btn);pg.appendChild(card);
+  const m=D.bodyMetrics;
+  if(m.length>=2){
+    const pr=mk("div","card");pr.innerHTML=`<div style="font-weight:700;margin-bottom:12px">📊 Progress</div>${[{label:"Weight",key:"weight",unit:"kg",inv:true},{label:"Body Fat",key:"bodyfat",unit:"%",inv:true},{label:"Waist",key:"waist",unit:"cm",inv:true},{label:"Arms",key:"arms",unit:"cm",inv:false}].map(({label,key,unit,inv})=>{if(!m[0]?.[key]||!m[m.length-1]?.[key])return"";const diff=(m[m.length-1][key]-m[0][key]).toFixed(1);const good=inv?+diff<0:+diff>0;return`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="color:#64748B;font-size:13px">${label}</span><div style="display:flex;gap:8px;align-items:center"><span style="font-weight:700">${m[m.length-1][key]}${unit}</span><span class="badge" style="background:${good?"rgba(110,231,183,0.15)":"rgba(248,113,113,0.15)"};color:${good?"#6EE7B7":"#F87171"}">${+diff>0?"+":""}${diff}${unit}</span></div></div>`;}).join("")}`;pg.appendChild(pr);
+  } else pg.appendChild(mk("div","","Log metrics on 2+ days to see progress 📈","text-align:center;color:#64748B;font-size:14px;padding:16px 0"));
+}
+
+// ─── HABITS ───────────────────────────────────────────────────────────────────
+function drawHabits(pg){
+  const h=D.habits;
+  const wc=mk("div","card");wc.innerHTML=`<div style="font-weight:700;margin-bottom:12px">💧 Water (${h.water}/10)</div><div style="display:flex;gap:6px;flex-wrap:wrap">${Array.from({length:10},(_,i)=>`<div class="wd${i<h.water?" on":""}" onclick="setW(${i+1})">💧</div>`).join("")}</div>`;pg.appendChild(wc);
+  const slc=mk("div","card");slc.innerHTML=`<div style="font-weight:700;margin-bottom:12px">😴 Sleep: ${h.sleep}h</div><input type="range" min="4" max="12" step="0.5" value="${h.sleep}" oninput="setSl(this.value)"><div style="color:${h.sleep>=7?"#6EE7B7":"#FB923C"};font-size:12px;margin-top:8px">${h.sleep>=8?"✓ Optimal recovery":h.sleep>=7?"Good — aim for 8h":"⚠ Under-recovered"}</div>`;pg.appendChild(slc);
+  const stc=mk("div","card");stc.innerHTML=`<div style="font-weight:700;margin-bottom:10px">🚶 Steps</div>`;
+  const si=mk("input","inp");si.type="number";si.value=h.steps||"";si.placeholder="Enter today's steps";si.style.marginBottom="10px";si.oninput=e=>{D.habits.steps=+e.target.value;save();const el=$("stp");if(el)el.style.width=Math.min(100,(D.habits.steps/10000)*100)+"%";};
+  const pb=mk("div","","","display:flex;align-items:center;gap:10px");pb.innerHTML=`<div style="flex:1;height:6px;background:#1E1E2E;border-radius:99px"><div id="stp" style="height:100%;width:${Math.min(100,(h.steps/10000)*100)}%;background:linear-gradient(90deg,#6EE7B7,#60A5FA);border-radius:99px"></div></div><span style="color:${h.steps>=10000?"#6EE7B7":"#FB923C"};font-size:12px;font-weight:700;flex-shrink:0">${h.steps>=10000?"Goal ✓":`${(10000-h.steps).toLocaleString()} to go`}</span>`;
+  stc.appendChild(si);stc.appendChild(pb);pg.appendChild(stc);
+  const hc=mk("div","card");hc.innerHTML=`<div style="font-weight:700;margin-bottom:14px">Daily Habits</div><div style="display:flex;gap:14px;justify-content:space-around">${[["stretching","🧘","Stretch"],["supplements","💊","Supps"]].map(([k,e,l])=>`<div onclick="togHabit('${k}')" style="text-align:center;cursor:pointer"><div class="hi${h[k]?" on":""}">${e}</div><div style="color:${h[k]?"#6EE7B7":"#64748B"};font-size:12px;font-weight:600">${l}</div></div>`).join("")}</div>`;pg.appendChild(hc);
+  const ab=mk("button","btn-ghost","");ab.innerHTML=habitBusy?`<div class="ld"><span></span><span></span><span></span></div>`:"🧠 Get AI Habit Insight";ab.disabled=habitBusy;
+  ab.onclick=async()=>{if(!D.apiKey){habitInsight="Add your API key in Profile for AI insights.";draw();return;}habitBusy=true;draw();try{habitInsight=await callAI(null,`Habits: water ${h.water}/10, sleep ${h.sleep}h, steps ${h.steps}, stretching:${h.stretching}, supplements:${h.supplements}. Give 1 insight and 1 tip in 2 sentences max.`);}catch{habitInsight="Focus on consistent sleep and hitting your protein target each day.";}habitBusy=false;draw();};pg.appendChild(ab);
+  if(habitInsight){const ic=mk("div","card","","background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2)");ic.innerHTML=`<div style="display:flex;gap:10px"><span style="font-size:20px;flex-shrink:0">💡</span><div style="color:#64748B;font-size:13px;line-height:1.7">${habitInsight}</div></div>`;pg.appendChild(ic);}
+}
+window.setW=v=>{D.habits.water=v;save();draw();};
+window.setSl=v=>{D.habits.sleep=parseFloat(v);save();draw();};
+window.togHabit=k=>{D.habits[k]=!D.habits[k];save();draw();};
+
+// ─── COACH ────────────────────────────────────────────────────────────────────
+function drawCoach(pg){
+  pg.style.paddingBottom="130px";
+  const wrap=mk("div","","","display:flex;flex-direction:column;height:calc(100vh - 155px)");
+  if(!chatLog.length)chatLog=[{r:"ai",t:`Hi ${D.user.name}! I'm your FitAI Coach 🤖 Ask me anything about workouts, nutrition, or progress.`}];
+  const cb=mk("div","chat-box");
+  chatLog.forEach(m=>{const d=mk("div",m.r==="ai"?"c-ai":"c-user",m.t);cb.appendChild(d);});
+  if(chatBusy){const l=mk("div","c-ai","","padding:12px 14px");l.innerHTML=`<div class="ld"><span></span><span></span><span></span></div>`;cb.appendChild(l);}
+  wrap.appendChild(cb);setTimeout(()=>{cb.scrollTop=cb.scrollHeight;},50);
+  const ir=mk("div","","","display:flex;gap:8px;padding-top:8px");
+  const ci=mk("input","inp");ci.placeholder="Ask your AI coach...";ci.value=chatInp;ci.style.flex="1";ci.oninput=e=>chatInp=e.target.value;ci.onkeydown=e=>{if(e.key==="Enter")sendChat();};
+  const sb=mk("button","","→","background:linear-gradient(135deg,#6EE7B7,#60A5FA);border:none;border-radius:12px;padding:0 18px;color:#0A0A0F;font-weight:800;font-size:18px;cursor:pointer;min-width:48px;height:48px");sb.onclick=sendChat;
+  ir.appendChild(ci);ir.appendChild(sb);wrap.appendChild(ir);pg.appendChild(wrap);
+}
+async function sendChat(){
+  if(!chatInp.trim()||chatBusy)return;
+  if(!D.apiKey){chatLog.push({r:"user",t:chatInp},{r:"ai",t:"⚠️ No API key. Go to Profile to add yours."});chatInp="";draw();return;}
+  const msg=chatInp.trim();chatInp="";chatBusy=true;chatLog.push({r:"user",t:msg});draw();
+  try{const rep=await callAI(`You are FitAI, a personal fitness coach. User: ${D.user.name}, goal: ${D.user.goal}, weight: ${D.user.weight}kg, target: ${D.user.targetWeight}kg. Calorie target: ${D.targets.calories}kcal, protein: ${D.targets.protein}g. Be concise, specific, motivating. Max 3 sentences.`,msg);chatLog.push({r:"ai",t:rep});}
+  catch{chatLog.push({r:"ai",t:"Connection error. Check your API key in Profile."});}
+  chatBusy=false;draw();
+}
+
+// ─── PROFILE ──────────────────────────────────────────────────────────────────
+function drawProfile(pg){
+  if(!profForm)profForm={...D.user,...D.targets};
+  if(!profKey)profKey=D.apiKey||"";
+  const pc=mk("div","card");pc.innerHTML=`<div style="font-weight:700;margin-bottom:14px">👤 Profile</div>`;
+  [["name","NAME","text"],["age","AGE","number"],["height","HEIGHT (cm)","number"],["weight","CURRENT WEIGHT (kg)","number"],["targetWeight","TARGET WEIGHT (kg)","number"]].forEach(([k,l,t])=>{const d=mk("div","","","margin-bottom:10px");d.appendChild(mk("label","lbl",l));const i=mk("input","inp");i.type=t;i.value=profForm[k]||"";i.oninput=e=>profForm[k]=e.target.value;d.appendChild(i);pc.appendChild(d);});
+  const gd=mk("div","","","margin-bottom:10px");gd.appendChild(mk("label","lbl","GOAL"));[["muscle_gain","💪 Muscle Gain"],["fat_loss","🔥 Fat Loss"],["maintenance","⚖️ Maintenance"]].forEach(([v,l])=>{const b=mk("button","chip"+(profForm.goal===v?" on":""),l,"display:block;width:100%;text-align:left;padding:11px 14px;margin-bottom:6px");b.onclick=()=>{profForm.goal=v;draw();};gd.appendChild(b);});pc.appendChild(gd);pg.appendChild(pc);
+  const tc=mk("div","card");tc.innerHTML=`<div style="font-weight:700;margin-bottom:14px">🎯 Daily Targets</div>`;
+  [["calories","CALORIES (kcal)"],["protein","PROTEIN (g)"],["carbs","CARBS (g)"],["fats","FATS (g)"]].forEach(([k,l])=>{const d=mk("div","","","margin-bottom:10px");d.appendChild(mk("label","lbl",l));const i=mk("input","inp");i.type="number";i.value=profForm[k]||"";i.oninput=e=>profForm[k]=e.target.value;d.appendChild(i);tc.appendChild(d);});pg.appendChild(tc);
+  const kc=mk("div","card");kc.innerHTML=`<div style="font-weight:700;margin-bottom:6px">🔑 API Key</div><div style="color:#64748B;font-size:12px;line-height:1.6;margin-bottom:12px">Stored only on this device. Get one free at <span style="color:#60A5FA">console.anthropic.com</span></div>`;
+  const kw=mk("div","kw","","margin-bottom:10px");const ki=mk("input","inp");ki.type=profKeyShow?"text":"password";ki.placeholder="sk-ant-api03-...";ki.value=profKey;ki.style.paddingRight="54px";ki.oninput=e=>{profKey=e.target.value;profKeyStatus="";};const kt=mk("button","ktog",profKeyShow?"Hide":"Show");kt.onclick=()=>{profKeyShow=!profKeyShow;draw();};kw.appendChild(ki);kw.appendChild(kt);kc.appendChild(kw);
+  if(profKey.trim()){const tb=mk("button","btn-ghost","","margin-bottom:10px");tb.innerHTML=profTesting?`<div class="ld"><span></span><span></span><span></span></div>`:"Test Key";tb.disabled=profTesting;tb.onclick=async()=>{profTesting=true;profKeyStatus="";draw();try{await testKey(profKey.trim());profKeyStatus="ok";}catch{profKeyStatus="fail";}profTesting=false;draw();};kc.appendChild(tb);}
+  if(profKeyStatus==="ok")kc.appendChild(mk("div","al al-ok","✓ API key works! All AI features unlocked."));
+  if(profKeyStatus==="fail")kc.appendChild(mk("div","al al-fail","✗ Invalid key. Check and try again."));
+  pg.appendChild(kc);
+  const sv=mk("button","btn btn-primary",profSaved?"✓ Saved!":"Save All Changes");if(profSaved)sv.style.cssText="width:100%;padding:14px;border-radius:14px;font-weight:800;font-size:15px;cursor:pointer;border:none;background:rgba(110,231,183,0.15);color:#6EE7B7;border:1px solid rgba(110,231,183,0.3)";
+  sv.onclick=()=>{upd({user:{name:profForm.name,age:+profForm.age,height:+profForm.height,weight:+profForm.weight,targetWeight:+profForm.targetWeight,gender:profForm.gender||D.user.gender,goal:profForm.goal},targets:{calories:+profForm.calories,protein:+profForm.protein,carbs:+profForm.carbs,fats:+profForm.fats},apiKey:profKey.trim()});profSaved=true;draw();setTimeout(()=>{profSaved=false;draw();},2000);};pg.appendChild(sv);
+  const rs=mk("button","btn-danger","Reset All Data");rs.onclick=()=>{if(confirm("Reset ALL data? Cannot be undone.")){localStorage.removeItem(SK);location.reload();}};pg.appendChild(rs);
+}
+
+// ─── START ────────────────────────────────────────────────────────────────────
+aiTmr=setInterval(()=>{aiIdx++;if(tab==="home")draw();},7000);
+draw();
+</script>
+</body>
+</html>
